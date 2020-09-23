@@ -17,9 +17,9 @@ enum Mode {
 
 class StateMachine {
 private:
-    int section_count;
-    int current_section;
-    Mode current_state;
+    int sectionCount;
+    int currentSection;
+    Mode currentState;
     // performs state transition and throws error if illegal
     void StateTransition(Mode, Mode);
 public:
@@ -39,14 +39,5 @@ public:
     // states 4 & 5
     void FinishGame();
 };
-
-//class IllegalGameStateException {
-//private:
-//    const char* msg;
-//public:
-//    explicit IllegalGameStateException(const char*);
-//
-//    const char *getMsg() const;
-//};
 
 #endif //STATEMACHINE_STATEMACHINE_H

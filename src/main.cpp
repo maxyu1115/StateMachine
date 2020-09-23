@@ -1,28 +1,71 @@
 #include <iostream>
 #include "StateMachine.h"
-using namespace std;
 
 void testNoErrors();
+void testIllegalTransition();
+void testSectionErrors();
 
 int main() {
-    cout << "Hello, World!" << endl;
+    std::cout << "Hello, World!" << std::endl;
     testNoErrors();
+    testIllegalTransition();
+    testSectionErrors();
     return 0;
 }
 
 void testNoErrors() {
-    StateMachine state_machine = StateMachine(2);
-    state_machine.StartGameplay();
-    state_machine.EnterComboMode();
-    state_machine.ExitComboMode();
+    StateMachine stateMachine = StateMachine(2);
+    stateMachine.StartGameplay();
+    stateMachine.EnterComboMode();
+    stateMachine.ExitComboMode();
 
-    state_machine.PrepareNewSection();
-    state_machine.StartMiniGame();
-    state_machine.StartNextSection();
+    assert(stateMachine.GetCurrentSection() == 0);
+    assert(stateMachine.GetGameMode() == Mode::MainGameplay);
+    stateMachine.PrepareNewSection();
+    stateMachine.StartMiniGame();
+    stateMachine.StartNextSection();
 
-    assert(state_machine.IsAtLastSection() == true);
-    state_machine.PrepareNewSection();
-    state_machine.StartMiniGame();
+    assert(stateMachine.IsAtLastSection() == true);
+    stateMachine.PrepareNewSection();
+    stateMachine.StartMiniGame();
 
-    state_machine.FinishGame();
+    stateMachine.FinishGame();
+}
+
+void testIllegalTransition() {
+    StateMachine stateMachine = StateMachine(2);
+    stateMachine.StartGameplay();
+    stateMachine.EnterComboMode();
+    try {
+        stateMachine.PrepareNewSection();
+        exit(-1);
+    } catch (std::exception& e) {
+        std::cout << "Found expected error: " << e.what() << std::endl;
+    }
+}
+
+void testSectionErrors() {
+    StateMachine stateMachine = StateMachine(2);
+    stateMachine.StartGameplay();
+    stateMachine.EnterComboMode();
+    stateMachine.ExitComboMode();
+
+    stateMachine.PrepareNewSection();
+    stateMachine.StartMiniGame();
+    try {
+        stateMachine.FinishGame();
+        exit(-1);
+    } catch (std::exception& e) {
+        std::cout << "Found expected error: " << e.what() << std::endl;
+    }
+    stateMachine.StartNextSection();
+    stateMachine.PrepareNewSection();
+    stateMachine.StartMiniGame();
+    try {
+        stateMachine.StartNextSection();
+        exit(-1);
+    } catch (std::exception& e) {
+        std::cout << "Found expected error: " << e.what() << std::endl;
+    }
+    stateMachine.FinishGame();
 }

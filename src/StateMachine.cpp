@@ -3,8 +3,9 @@
 //
 
 #include "StateMachine.h"
+#include "IllegalGameStateException.h"
 
-const bool transition_table[6][6] = {
+const bool transitionTable[6][6] = {
         // 0 -> 1
         {false, true, false, false, false, false},
         // 1 -> 2 | 3
@@ -19,29 +20,29 @@ const bool transition_table[6][6] = {
         {false, false, false, false, false, false},
 };
 
-StateMachine::StateMachine(int section_count) {
-    StateMachine::section_count = section_count;
-    current_section = 0;
-    current_state = Mode::NotStarted;
+StateMachine::StateMachine(int sectionCount) {
+    StateMachine::sectionCount = sectionCount;
+    currentSection = 0;
+    currentState = Mode::NotStarted;
 }
 
 Mode StateMachine::GetGameMode() {
-    return current_state;
+    return currentState;
 }
 
 int StateMachine::GetCurrentSection() const {
-    return current_section;
+    return currentSection;
 }
 
 bool StateMachine::IsAtLastSection() const {
-    return (current_section == section_count - 1);
+    return (currentSection == sectionCount - 1);
 }
 
 void StateMachine::StateTransition(Mode origin, Mode destination) {
-    if (origin == current_state && transition_table[origin][destination]) {
-        current_state = destination;
+    if (origin == currentState && transitionTable[origin][destination]) {
+        currentState = destination;
     } else {
-        throw "Illegal State!";
+        throw IllegalGameStateException("Illegal game state transition");
     }
 }
 
@@ -68,9 +69,9 @@ void StateMachine::StartMiniGame() {
 void StateMachine::StartNextSection() {
     if (!IsAtLastSection()) {
         StateTransition(MiniGame, MainGameplay);
-        current_section++;
+        currentSection++;
     } else {
-        throw "yikes";
+        throw IllegalGameStateException("Cannot start next section when at last section");
     }
 }
 
@@ -78,16 +79,6 @@ void StateMachine::FinishGame() {
     if (IsAtLastSection()) {
         StateTransition(MiniGame, Finished);
     } else {
-        throw "yieks";
+        throw IllegalGameStateException("Cannot start finish game with remaining sections");
     }
 }
-
-
-//
-//IllegalGameStateException::IllegalGameStateException(const char *) {
-//
-//}
-//
-//const char *IllegalGameStateException::getMsg() const {
-//    return msg;
-//}
