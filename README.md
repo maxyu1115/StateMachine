@@ -1,4 +1,4 @@
-#StateMachine
+# StateMachine
 Author: Max Yu, https://github.com/maxyu1115
 
 This is a simple 6-state State Machine. State machines are the bread and butter of software development; everything from microwave ovens to NPCs in a triple-A title use them. 
